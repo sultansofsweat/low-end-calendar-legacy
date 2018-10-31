@@ -2,13 +2,14 @@
 	session_save_path("sessions");
 	session_set_cookie_params(0,"/",$_SERVER['HTTP_HOST'],false,true);
 	session_start();
+	include("functions.php");
 	if(isset($_SESSION['style']) && file_exists("styles/" . $_SESSION['style'] . ".css"))
 	{
 		$style="styles/" . $_SESSION['style'] . ".css";
 	}
 	else
 	{
-		$style="styles/default.css";
+		$style=get_default_style();
 	}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
@@ -26,7 +27,7 @@
   <body>
   <p>
   <?php
-	include("functions.php");
+	
 	if(isset($_POST['s']) && $_POST['s'] == "y" && isset($_POST['id']) && isset($_SESSION['username']) && $_SESSION['username'] != "")
 	{
 		$id=preg_replace("/[^0-9]/","",$_POST['id']);

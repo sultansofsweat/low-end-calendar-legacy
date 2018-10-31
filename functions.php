@@ -270,6 +270,12 @@
 			trigger_error("Handle passed to function delete_user is not a valid database.",E_USER_WARNING);
 			return false;
 		}
+		//Make sure user is not root!
+		if($login == "root")
+		{
+			trigger_error("Cannot delete the root superuser, aborting.",E_USER_WARNING);
+			return false;
+		}
 		//Prepare statement
 		$statement=$db->prepare("DELETE FROM users WHERE login = ?");
 		if($statement === false)
@@ -308,6 +314,59 @@
 		//Failure
 		return false;
 	}
+	//Function for setting a user's new last login date
+	function set_last_login($db,$login)
+	{
+		//Make sure a database is actually passed in
+		if(!is_a($db,"SQLite3"))
+		{
+			trigger_error("Handle passed to function set_last_login is not a valid database.",E_USER_WARNING);
+			return false;
+		}
+		//Prepare statement
+		$statement=$db->prepare("UPDATE users SET lastlogin = ? WHERE login = ?");
+		if($statement === false)
+		{
+			trigger_error("Failed to prepare statement in function set_last_login.",E_USER_WARNING);
+			goto finish;
+		}
+		//Bind variables to statement
+		$debug=$statement->bindValue(1,time(),SQLITE3_INTEGER);
+		if($debug === false)
+		{
+			trigger_error("Failed to assign values to prepared statement in function set_last_login.",E_USER_WARNING);
+			goto finish;
+		}
+		$debug=$statement->bindValue(2,$login,SQLITE3_TEXT);
+		if($debug === false)
+		{
+			trigger_error("Failed to assign values to prepared statement in function set_last_login.",E_USER_WARNING);
+			goto finish;
+		}
+		//Execute statement
+		$result=$statement->execute();
+		if($result === false)
+		{
+			trigger_error("Failed to set last login.",E_USER_WARNING);
+			goto finish;
+		}
+		
+		//Close statement
+		$statement->close();
+		unset($statement);
+		//Success
+		return true;
+		
+		finish:
+		//Close statement if necessary
+		if(isset($statement) && is_a($statement,"SQLite3Stmt"))
+		{
+			$statement->close();
+			unset($statement);
+		}
+		//Failure
+		return false;
+	}
 	//Function for getting all users' information
 	function get_all_users($db)
 	{
@@ -316,7 +375,7 @@
 		if(!is_a($db,"SQLite3"))
 		{
 			trigger_error("Handle passed to function get_all_users is not a valid database.",E_USER_WARNING);
-			return $user;
+			return $userlist;
 		}
 		//Prepare statement
 		$statement=$db->prepare("SELECT login,name,privilege,timezone,stylesheet FROM users");
@@ -512,7 +571,7 @@
 		if(!is_a($db,"SQLite3"))
 		{
 			trigger_error("Handle passed to function get_user_count is not a valid database.",E_USER_WARNING);
-			return $password;
+			return $count;
 		}
 		//Prepare statement
 		$statement=$db->prepare("SELECT COUNT(login) FROM users");
@@ -553,12 +612,33 @@
 		//Failure
 		return $count;
 	}
+	//Function for modifying a user's login
+	function change_login_name($db,$old,$new)
+	{
+		//Make sure a database is actually passed in
+		if(!is_a($db,"SQLite3"))
+		{
+			trigger_error("Handle passed to function get_user_count is not a valid database.",E_USER_WARNING);
+			return false;
+		}
+		//Make sure old username is not root
+		if($login == "root")
+		{
+			trigger_error("Cannot modify login name for the root superuser, aborting.",E_USER_WARNING);
+			return false;
+		}
+		//Get old user details
+		//Insert new user using old details
+		//Delete old user
+		trigger_error("This function is not yet implemented.");
+		return false;
+	}
 	
 	//Function for getting a system setting
 	function get_setting($db,$setting)
 	{
 		//List defaults
-		$defaults=array("allowregistration" => "no","openviewing" => "no","calendarname" => "My Calendar","timezone" => "America/Toronto");
+		$defaults=array("allowregistration" => "no","openviewing" => "no","calendarname" => "My Calendar","timezone" => "America/Toronto","stylesheet" => "white","increment" => 5);
 		if(isset($defaults[$setting]))
 		{
 			$value=$defaults[$setting];
@@ -672,6 +752,22 @@
 		}
 		//Failure
 		return false;
+	}
+	//Function for getting the default stylesheet
+	function get_default_style()
+	{
+		//Open database
+		$db=new SQLite3("db/calendar.sqlite",SQLITE3_OPEN_READONLY);
+		//Get stylesheet setting field
+		$sheet=get_setting($db,"stylesheet");
+		//Make sure stylesheet exists
+		if(!file_exists("styles/$sheet.css"))
+		{
+			trigger_error("Default stylesheet $sheet doesn't exist, falling back to system defaults.",E_USER_WARNING);
+			return "styles/white.css";
+		}
+		//Return formatted string
+		return "styles/$sheet.css";
 	}
 	
 	//Function for inserting a calendar event
