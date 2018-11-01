@@ -2,14 +2,13 @@
 	session_save_path("sessions");
 	session_set_cookie_params(0,"/",$_SERVER['HTTP_HOST'],false,true);
 	session_start();
-	include("functions.php");
 	if(isset($_SESSION['style']) && file_exists("styles/" . $_SESSION['style'] . ".css"))
 	{
 		$style="styles/" . $_SESSION['style'] . ".css";
 	}
 	else
 	{
-		$style=get_default_style();
+		$style="styles/default.css";
 	}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
@@ -26,7 +25,7 @@
   </head>
   <body>
   <?php
-	
+	include("functions.php");
 	function sort_events($a,$b)
 	{
 		if(!isset($a[1]) || !isset($b[1]) || $a[1] == $b[1])
@@ -132,7 +131,31 @@
 						{
 							$retime=0;
 						}
-						$nevent=array($event[0],$event[1],$event[2],$rtime,$retime,$event[5],$event[6],$event[7],$event[8],$event[9],$event[10],$event[11]);
+						if(date("I") == 0 && date("I",$rtime) == 1)
+						{
+							$disprtime=$rtime-(60*60);
+						}
+						elseif(date("I") == 1 && date("I",$rtime) == 0)
+						{
+							$disprtime=$rtime+(60*60);
+						}
+						else
+						{
+							$disprtime=$rtime;
+						}
+						if($retime > 0 && date("I") == 0 && date("I",$retime) == 1)
+						{
+							$dispretime=$retime-(60*60);
+						}
+						elseif($retime > 0 && date("I") == 1 && date("I",$retime) == 0)
+						{
+							$dispretime=$retime+(60*60);
+						}
+						else
+						{
+							$dispretime=$retime;
+						}
+						$nevent=array($event[0],$event[1],$event[2],$disprtime,$dispretime,$event[5],$event[6],$event[7],$event[8],$event[9],$event[10],$event[11]);
 						if(($nevent[5] == 1 && $time < ($nevent[3]+(24*60*60))) || $time < $nevent[3] || ($time >= $nevent[3] && $nevent[4] > 0 && $time < $nevent[4]))
 						{
 							$nedetails=array("",$rtime);
