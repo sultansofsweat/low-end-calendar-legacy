@@ -64,9 +64,9 @@
 		{
 			$time=$event[3] - ((date("i",$event[3]) % 10)*60);
 			$etime=$event[4] - ((date("i",$event[4]) % 10)*60) + 600;
-			while($time <= $etime)
+			while($time < $etime)
 			{
-				if(date("n/j/Y",$time) == $date)
+				if(date("n/j/Y",$time) == $date && isset($list[date("g:i A",$time)]))
 				{
 					$list[date("g:i A",$time)].="<a href=\"viewevent.php?id=" . $event[0] . "\">" . $event[1] . "</a><br>\r\n";
 				}
@@ -91,15 +91,16 @@
 			if($day != "" && $month != "" && $year != "")
 			{
 				$date=strtotime($month . "/" . $day . "/" . $year);
+				$time=$date;
 				$events=event_display_prepare($user[0],$user[2],get_all_events($db));
 				$list=generate_list();
 				foreach($events as $event)
 				{
-					if($event !== false)
+					if($event !== false && $event[11] == "")
 					{
 						insert_into_list($list,$event,date("n/j/Y",$date));
 					}
-					elseif($event !== false && $event[11] != "")
+					elseif($event !== false)
 					{
 						$repeat=explode(",",$event[11]);
 						$rtime=$event[3];
@@ -118,8 +119,32 @@
 								{
 									$retime=0;
 								}
-								$nevent=array($event[0],$event[1],$event[2],$rtime,$retime,$event[5],$event[6],$event[7],$event[8],$event[9],$event[10],$event[11]);
-								if($nevent !== false)
+								if(date("I") == 0 && date("I",$rtime) == 1)
+								{
+									$disprtime=$rtime-(60*60);
+								}
+								elseif(date("I") == 1 && date("I",$rtime) == 0)
+								{
+									$disprtime=$rtime+(60*60);
+								}
+								else
+								{
+									$disprtime=$rtime;
+								}
+								if($retime > 0 && date("I") == 0 && date("I",$retime) == 1)
+								{
+									$dispretime=$retime-(60*60);
+								}
+								elseif($retime > 0 && date("I") == 1 && date("I",$retime) == 0)
+								{
+									$dispretime=$retime+(60*60);
+								}
+								else
+								{
+									$dispretime=$retime;
+								}
+								$nevent=array($event[0],$event[1],$event[2],$disprtime,$dispretime,$event[5],$event[6],$event[7],$event[8],$event[9],$event[10],$event[11]);
+								if(date("n/j/Y",$nevent[3]) == date("n/j/Y",$date) || ($nevent[5] == 0 && date("n/j/Y",$nevent[4]) == date("n/j/Y",$date)))
 								{
 									insert_into_list($list,$nevent,date("n/j/Y",$date));
 									break;
@@ -183,7 +208,31 @@
 									{
 										$retime=0;
 									}
-									$nevent=array($event[0],$event[1],$event[2],$rtime,$retime,$event[5],$event[6],$event[7],$event[8],$event[9],$event[10],$event[11]);
+									if(date("I") == 0 && date("I",$rtime) == 1)
+									{
+										$disprtime=$rtime-(60*60);
+									}
+									elseif(date("I") == 1 && date("I",$rtime) == 0)
+									{
+										$disprtime=$rtime+(60*60);
+									}
+									else
+									{
+										$disprtime=$rtime;
+									}
+									if($retime > 0 && date("I") == 0 && date("I",$retime) == 1)
+									{
+										$dispretime=$retime-(60*60);
+									}
+									elseif($retime > 0 && date("I") == 1 && date("I",$retime) == 0)
+									{
+										$dispretime=$retime+(60*60);
+									}
+									else
+									{
+										$dispretime=$retime;
+									}
+									$nevent=array($event[0],$event[1],$event[2],$disprtime,$dispretime,$event[5],$event[6],$event[7],$event[8],$event[9],$event[10],$event[11]);
 									if($nevent !== false)
 									{
 										insert_into_list($list,$nevent,date("n/j/Y",$date));

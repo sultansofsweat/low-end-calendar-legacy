@@ -141,7 +141,31 @@
 								{
 									$retime=0;
 								}
-								$nevent=array($event[0],$event[1],$event[2],$rtime,$retime,$event[5],$event[6],$event[7],$event[8],$event[9],$event[10],$event[11]);
+								if(date("I") == 0 && date("I",$rtime) == 1)
+								{
+									$disprtime=$rtime-(60*60);
+								}
+								elseif(date("I") == 1 && date("I",$rtime) == 0)
+								{
+									$disprtime=$rtime+(60*60);
+								}
+								else
+								{
+									$disprtime=$rtime;
+								}
+								if($retime > 0 && date("I") == 0 && date("I",$retime) == 1)
+								{
+									$dispretime=$retime-(60*60);
+								}
+								elseif($retime > 0 && date("I") == 1 && date("I",$retime) == 0)
+								{
+									$dispretime=$retime+(60*60);
+								}
+								else
+								{
+									$dispretime=$retime;
+								}
+								$nevent=array($event[0],$event[1],$event[2],$disprtime,$dispretime,$event[5],$event[6],$event[7],$event[8],$event[9],$event[10],$event[11]);
 								if(in_array(date("n/j/Y",$nevent[3]),$dates) || ($nevent[5] == 0 && in_array(date("n/j/Y",$nevent[4]),$dates)))
 								{
 									insert_into_list($list,$nevent);
@@ -210,7 +234,31 @@
 									{
 										$retime=0;
 									}
-									$nevent=array($event[0],$event[1],$event[2],$rtime,$retime,$event[5],$event[6],$event[7],$event[8],$event[9],$event[10],$event[11]);
+									if(date("I") == 0 && date("I",$rtime) == 1)
+									{
+										$disprtime=$rtime-(60*60);
+									}
+									elseif(date("I") == 1 && date("I",$rtime) == 0)
+									{
+										$disprtime=$rtime+(60*60);
+									}
+									else
+									{
+										$disprtime=$rtime;
+									}
+									if($retime > 0 && date("I") == 0 && date("I",$retime) == 1)
+									{
+										$dispretime=$retime-(60*60);
+									}
+									elseif($retime > 0 && date("I") == 1 && date("I",$retime) == 0)
+									{
+										$dispretime=$retime+(60*60);
+									}
+									else
+									{
+										$dispretime=$retime;
+									}
+									$nevent=array($event[0],$event[1],$event[2],$disprtime,$dispretime,$event[5],$event[6],$event[7],$event[8],$event[9],$event[10],$event[11]);
 									if(in_array(date("n/j/Y",$nevent[3]),$dates) || ($nevent[5] == 0 && in_array(date("n/j/Y",$nevent[4]),$dates)))
 									{
 										insert_into_list($list,$nevent);
