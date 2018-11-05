@@ -1716,4 +1716,21 @@
 		//Failure
 		return $event;
 	}
+    
+    //Function for getting version information
+    function get_version()
+    {
+        $verinfo=array("System.Had","One","Job");
+        if(file_exists("db/version.txt"))
+        {
+            $vi=explode("\r\n",file_get_contents("db/version.txt"));
+            if(count($vi) == 3)
+            {
+                $verinfo[0]=$vi[0];
+                $verinfo[1]=$vi[1];
+                $verinfo[2]=$vi[2];
+            }
+        }
+        return $verinfo;
+    }
 ?>

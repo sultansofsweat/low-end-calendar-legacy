@@ -11,6 +11,7 @@
 	{
 		$style=get_default_style();
 	}
+    $version=get_version();
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
@@ -406,6 +407,6 @@
   </p>
   <hr>
   <h6>Low End Calendar is copyright &copy; 2017-2018 Brad Hunter/CarnelProd666. All rights are reserved. Built on pure PHP and CSS, no JavaScript here (except for enabling redirecting). Direct all bug reports, compliments, and hatemail <a href="http://firealarms.redbat.ca/contact.php">here</a>.<br>
-  LECal software release 1.1 revision 11, 236th revision overall.</h6>
+  LECal software release <?php echo $version[0] ?> revision <?php echo $version[1] ?>, revision <?php echo $version[2] ?> overall.</h6>
   </body>
 </html>
