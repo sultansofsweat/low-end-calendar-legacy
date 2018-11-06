@@ -1249,26 +1249,26 @@
 			
 			if(isset($entry["DST"]) && $entry["DST"] != date("I"))
 			{
-				if($entry["DST"] == 0 && date("I") == 1)
+				/*if($entry["DST"] == 0 && date("I") == 1)
 				{
-					$event[3]-=(60*60);
-					if($event[4] > 0)
+					$event[2]-=(60*60);
+					if($event[3] > 0)
 					{
-						$event[4]-=(60*60);
+						$event[3]-=(60*60);
 					}
 				}
 				elseif($entry["DST"] == 1 && date("I") == 0)
 				{
-					$event[3]+=(60*60);
-					if($event[4] > 0)
+					$event[2]+=(60*60);
+					if($event[3] > 0)
 					{
-						$event[4]+=(60*60);
+						$event[3]+=(60*60);
 					}
 				}
 				else
 				{
 					trigger_error("Something wicked occurred during DST processing. Leaving untouched, expect problems.");
-				}
+				}*/
 			}
 		}
 		
