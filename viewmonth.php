@@ -116,20 +116,7 @@
 			if($month != "" && $year != "")
 			{
 				$list=generate_list($month,$year);
-				$x=strtotime($month . "/1/" . $year);
-				$time=strtotime($year . "W" . date("W",$x));
-				$date=date("F",$x);
-				$ddate=date("F Y",$x);
-				$max=strtotime($date . " " . date("t",$x) . " " . $year);
-				$eweek=date("W",$max);
-				$etime=strtotime($year . "W" . $eweek)+(6*24*60*60);
-				$dates=array();
-				$ctime=$time;
-				while($ctime <= $etime)
-				{
-					$dates[]=date("n/j/Y",$ctime);
-					$ctime+=(24*60*60);
-				}
+                $dates=array_keys($list);
 				$events=event_display_prepare($user[0],$user[2],get_all_events($db));
 				foreach($events as $event)
 				{
@@ -212,20 +199,7 @@
 				if($month != "" && $year != "")
 				{
 					$list=generate_list($month,$year);
-					$x=strtotime($month . "/1/" . $year);
-					$time=strtotime($year . "W" . date("W",$x));
-					$date=date("F",$x);
-					$ddate=date("F Y",$x);
-					$max=strtotime($date . " " . date("t",$x) . " " . $year);
-					$eweek=date("W",$max);
-					$etime=strtotime($year . "W" . $eweek)+(6*24*60*60);
-					$dates=array();
-					$ctime=$time;
-					while($ctime <= $etime)
-					{
-						$dates[]=date("n/j/Y",$ctime);
-						$ctime+=(24*60*60);
-					}
+					$dates=array_keys($list);
 					$events=event_display_prepare("",0,get_all_events($db));
 					foreach($events as $event)
 					{
@@ -315,7 +289,7 @@
   <input type="submit" value="View events">
   </form>
   <hr>
-  <h3>Events for month of: <?php if(isset($ddate)) { echo $ddate; } ?></h3>
+  <h3>Events for month of: <?php if(isset($month) && isset($year)) { echo date("F Y",strtotime($month . "/1/" . $year)); } ?></h3>
   <table width="100%">
   <tr>
   <th>Monday</th>

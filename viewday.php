@@ -181,73 +181,74 @@
 				if($day != "" && $month != "" && $year != "")
 				{
 					$date=strtotime($month . "/" . $day . "/" . $year);
-					$events=event_display_prepare("",0,get_all_events($db));
-					$list=generate_list();
-					foreach($events as $event)
-					{
-						if($event !== false)
-						{
-							insert_into_list($list,$event,date("n/j/Y",$date));
-						}
-						elseif($event !== false && $event[11] != "")
-						{
-							$repeat=explode(",",$event[11]);
-							$rtime=$event[3];
-							if($repeat[1] > $time)
-							{
-								$etime=$repeat[1];
-								$rtime += ($repeat[0]*7*24*60*60);
-								$mult=1;
-								while($rtime < $etime)
-								{
-									if($event[5] == 0)
-									{
-										$retime=$event[4] + ($repeat[0]*$mult*7*24*60*60);
-									}
-									else
-									{
-										$retime=0;
-									}
-									if(date("I") == 0 && date("I",$rtime) == 1)
-									{
-										$disprtime=$rtime-(60*60);
-									}
-									elseif(date("I") == 1 && date("I",$rtime) == 0)
-									{
-										$disprtime=$rtime+(60*60);
-									}
-									else
-									{
-										$disprtime=$rtime;
-									}
-									if($retime > 0 && date("I") == 0 && date("I",$retime) == 1)
-									{
-										$dispretime=$retime-(60*60);
-									}
-									elseif($retime > 0 && date("I") == 1 && date("I",$retime) == 0)
-									{
-										$dispretime=$retime+(60*60);
-									}
-									else
-									{
-										$dispretime=$retime;
-									}
-									$nevent=array($event[0],$event[1],$event[2],$disprtime,$dispretime,$event[5],$event[6],$event[7],$event[8],$event[9],$event[10],$event[11]);
-									if($nevent !== false)
-									{
-										insert_into_list($list,$nevent,date("n/j/Y",$date));
-										break;
-									}
-									$rtime += ($repeat[0]*7*24*60*60);
-									$mult++;
-								}
-							}
-						}
-					}
-					if($list["allday"] == "")
-					{
-						$list["allday"]="None at this time.";
-					}
+                    $time=$date;
+                    $events=event_display_prepare("",0,get_all_events($db));
+                    $list=generate_list();
+                    foreach($events as $event)
+                    {
+                        if($event !== false && $event[11] == "")
+                        {
+                            insert_into_list($list,$event,date("n/j/Y",$date));
+                        }
+                        elseif($event !== false)
+                        {
+                            $repeat=explode(",",$event[11]);
+                            $rtime=$event[3];
+                            if($repeat[1] > $time)
+                            {
+                                $etime=$repeat[1];
+                                $rtime += ($repeat[0]*7*24*60*60);
+                                $mult=1;
+                                while($rtime < $etime)
+                                {
+                                    if($event[5] == 0)
+                                    {
+                                        $retime=$event[4] + ($repeat[0]*$mult*7*24*60*60);
+                                    }
+                                    else
+                                    {
+                                        $retime=0;
+                                    }
+                                    if(date("I") == 0 && date("I",$rtime) == 1)
+                                    {
+                                        $disprtime=$rtime-(60*60);
+                                    }
+                                    elseif(date("I") == 1 && date("I",$rtime) == 0)
+                                    {
+                                        $disprtime=$rtime+(60*60);
+                                    }
+                                    else
+                                    {
+                                        $disprtime=$rtime;
+                                    }
+                                    if($retime > 0 && date("I") == 0 && date("I",$retime) == 1)
+                                    {
+                                        $dispretime=$retime-(60*60);
+                                    }
+                                    elseif($retime > 0 && date("I") == 1 && date("I",$retime) == 0)
+                                    {
+                                        $dispretime=$retime+(60*60);
+                                    }
+                                    else
+                                    {
+                                        $dispretime=$retime;
+                                    }
+                                    $nevent=array($event[0],$event[1],$event[2],$disprtime,$dispretime,$event[5],$event[6],$event[7],$event[8],$event[9],$event[10],$event[11]);
+                                    if(date("n/j/Y",$nevent[3]) == date("n/j/Y",$date) || ($nevent[5] == 0 && date("n/j/Y",$nevent[4]) == date("n/j/Y",$date)))
+                                    {
+                                        insert_into_list($list,$nevent,date("n/j/Y",$date));
+                                        break;
+                                    }
+                                    $rtime += ($repeat[0]*7*24*60*60);
+                                    $mult++;
+                                }
+                            }
+                        }
+                    }
+                    if($list["allday"] == "")
+                    {
+                        $list["allday"]="None at this time.";
+                    }
 				}
 			}
 		}
