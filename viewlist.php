@@ -218,6 +218,9 @@
 		echo ("<p>There are no events for the system to display.</p>\r\n<hr>\r\n");
 	}
   ?>
-  <p><a href="index.php">Go back to main page</a></p>
+  <p><a href="viewday.php">Switch to daily view</a><br>
+  <a href="viewweek.php">Switch to weekly view</a><br>
+  <a href="viewmonth.php">Switch to monthly view</a><br><br>
+  <a href="index.php">Go back to main page</a></p>
   </body>
 </html>

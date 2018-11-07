@@ -363,6 +363,9 @@
 	}
   ?>
   </table>
-  <p><a href="index.php">Go back to main page</a></p>
+  <p><a href="viewday.php">Switch to daily view</a><br>
+  <a href="viewmonth.php">Switch to monthly view</a><br>
+  <a href="viewlist.php">Switch to list view</a><br><br>
+  <a href="index.php">Go back to main page</a></p>
   </body>
 </html>
