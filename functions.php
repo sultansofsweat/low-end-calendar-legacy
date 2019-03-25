@@ -1,20 +1,38 @@
 <?php
-	//Define password_hash and password_verify if they are not defined
-	if(!function_exists("password_hash"))
-	{
-		function password_hash($password,$method=PASSWORD_DEFAULT)
-		{
-			return hash("whirlpool",$password);
-		}
-	}
-	if(!function_exists("password_verify"))
-	{
-		function password_verify($password,$hash)
-		{
-			$hp=hash("whirlpool",$password);
-			return($hp == $hash);
-		}
-	}
+    //Import password functions
+    require("password.php");
+	//Legacy password handling function
+    function old_password_verify($password,$hash)
+    {
+        $hp=hash("whirlpool",$password);
+        return($hp == $hash);
+    }
+    
+    //Function for getting new password cost
+    function get_password_cost()
+    {
+        //Time target is 80 ms
+        $target = 0.08;
+        //Set baseline cost
+        $cost = 7;
+        //Set default values
+        $start=0;
+        $end=0;
+        do
+        {
+            //Increment cost
+            $cost++;
+            //Start timer
+            $start = microtime(true);
+            //Compute hash
+            password_hash("test", PASSWORD_BCRYPT, array("cost" => $cost));
+            //End timer
+            $end = microtime(true);
+        } while (($end - $start) < $target);
+    
+        //Return the appropriate cost
+        return $cost;
+    }
 	
 	//Error handling function
 	function eh($errno, $errstr, $errfile, $errline)
@@ -261,6 +279,59 @@
 		//Failure
 		return false;
 	}
+	//Function for updating user's password
+	function update_password($db,$login,$password)
+	{
+		//Make sure a database is actually passed in
+		if(!is_a($db,"SQLite3"))
+		{
+			trigger_error("Handle passed to function update_password is not a valid database.",E_USER_WARNING);
+			return false;
+		}
+		//Prepare statement
+		$statement=$db->prepare("UPDATE users SET password = ? WHERE login = ?");
+		if($statement === false)
+		{
+			trigger_error("Failed to prepare statement in function update_password.",E_USER_WARNING);
+			goto finish;
+		}
+		//Bind variables to statement
+		$debug=$statement->bindValue(1,$password,SQLITE3_TEXT);
+		if($debug === false)
+		{
+			trigger_error("Failed to assign values to prepared statement in function update_password.",E_USER_WARNING);
+			goto finish;
+		}
+		$debug=$statement->bindValue(2,$login,SQLITE3_TEXT);
+		if($debug === false)
+		{
+			trigger_error("Failed to assign values to prepared statement in function update_password.",E_USER_WARNING);
+			goto finish;
+		}
+		//Execute statement
+		$result=$statement->execute();
+		if($result === false)
+		{
+			trigger_error("Failed to update password.",E_USER_WARNING);
+			goto finish;
+		}
+		
+		//Close statement
+		$statement->close();
+		unset($statement);
+		//Success
+		return true;
+		
+		finish:
+		//Close statement if necessary
+		if(isset($statement) && is_a($statement,"SQLite3Stmt"))
+		{
+			$statement->close();
+			unset($statement);
+		}
+		//Failure
+		return false;
+	}
 	//Function for deleting a user
 	function delete_user($db,$login)
 	{
@@ -324,7 +395,7 @@
 			return false;
 		}
 		//Prepare statement
-		$statement=$db->prepare("UPDATE users SET lastlogin = ? WHERE login = ?");
+		$statement=$db->prepare("UPDATE users SET lastlogin = ?, logincount = logincount + 1 WHERE login = ?");
 		if($statement === false)
 		{
 			trigger_error("Failed to prepare statement in function set_last_login.",E_USER_WARNING);
@@ -506,6 +577,69 @@
 		}
 		//Failure
 		return $user;
+	}
+    //Function for getting last login information
+	function get_last_login($db)
+	{
+		$userlist=array();
+		//Make sure a database is actually passed in
+		if(!is_a($db,"SQLite3"))
+		{
+			trigger_error("Handle passed to function get_last_login is not a valid database.",E_USER_WARNING);
+			return $userlist;
+		}
+		//Prepare statement
+		$statement=$db->prepare("SELECT login,name,logincount,lastlogin FROM users");
+		if($statement === false)
+		{
+			trigger_error("Failed to prepare statement in function get_last_login.",E_USER_WARNING);
+			goto finish;
+		}
+		//Execute statement
+		$result=$statement->execute();
+		if($result === false)
+		{
+			trigger_error("Failed to query for last login information.",E_USER_WARNING);
+			goto finish;
+		}
+		
+		while($entry=$result->fetchArray(SQLITE3_ASSOC))
+		{
+			$user=array("shonejob","Systemhad Onejob",0,0);
+			if(isset($entry["Login"]))
+			{
+				$user[0]=$entry["Login"];
+			}
+			if(isset($entry["Name"]))
+			{
+				$user[1]=$entry["Name"];
+			}
+			if(isset($entry["LoginCount"]))
+			{
+				$user[2]=$entry["LoginCount"];
+			}
+			if(isset($entry["LastLogin"]))
+			{
+				$user[3]=$entry["LastLogin"];
+			}
+			$userlist[]=$user;
+		}
+		
+		//Close statement
+		$statement->close();
+		unset($statement);
+		//Success
+		return $userlist;
+		
+		finish:
+		//Close statement if necessary
+		if(isset($statement) && is_a($statement,"SQLite3Stmt"))
+		{
+			$statement->close();
+			unset($statement);
+		}
+		//Failure
+		return $userlist;
 	}
 	//Function for getting a user's password
 	function get_password($db,$login)

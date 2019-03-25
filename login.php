@@ -2,7 +2,7 @@
 	session_save_path("sessions");
 	session_set_cookie_params(0,"/",$_SERVER['HTTP_HOST'],false,true);
 	session_start();
-	include("functions.php");
+	require("functions.php");
 	if(isset($_SESSION['style']) && file_exists("styles/" . $_SESSION['style'] . ".css"))
 	{
 		$style="styles/" . $_SESSION['style'] . ".css";
@@ -32,28 +32,50 @@
 	{
 		//Begin submission
 		$db=open_db("db/calendar.sqlite",SQLITE3_OPEN_READONLY);
-		if(isset($_POST['name']) && $_POST['name'] != "" && isset($_POST['password']) && $_POST['password'] != "")
+		if(isset($_POST['name']) && ($login=preg_replace("/[^A-Za-z0-9]/","",$_POST['name'])) != "" && isset($_POST['password']) && $_POST['password'] != "")
 		{
-			$login=preg_replace("/[^A-Za-z0-9]/","",$_POST['name']);
-			if(password_verify($_POST['password'],get_password($db,$login)) === true)
+            $password=get_password($db,$login);
+			if(password_verify($_POST['password'],$password) === true || old_password_verify($_POST['password'],$password) === true)
 			{
-				$_SESSION['username']=$login;
-				//setcookie("username",$login,0,getcwd(),"",false,true);
-				echo ("<script type=\"text/javascript\">document.cookie = \"username=$login;httponly\"</script>");
-				$userinfo=get_user($db,$login);
-				if(isset($userinfo[1]) && $userinfo[1] != "")
-				{
-					$_SESSION["name"]=$userinfo[1];
-				}
-				if(isset($userinfo[3]) && $userinfo[3] != "")
-				{
-					$_SESSION["timezone"]=$userinfo[3];
-				}
-				if(isset($userinfo[4]) && $userinfo[4] != "")
-				{
-					$_SESSION["style"]=$userinfo[4];
-				}
-				echo ("<script type=\"text/javascript\">window.location = \"index.php?in=yes\"</script>");
+                $_SESSION['username']=$login;
+                //setcookie("username",$login,0,getcwd(),"",false,true);
+                echo ("<script type=\"text/javascript\">document.cookie = \"username=$login;httponly\"</script>");
+                $userinfo=get_user($db,$login);
+                if(isset($userinfo[1]) && $userinfo[1] != "")
+                {
+                    $_SESSION["name"]=$userinfo[1];
+                }
+                if(isset($userinfo[3]) && $userinfo[3] != "")
+                {
+                    $_SESSION["timezone"]=$userinfo[3];
+                }
+                if(isset($userinfo[4]) && $userinfo[4] != "")
+                {
+                    $_SESSION["style"]=$userinfo[4];
+                }
+                $debug=close_db($db);
+                if($debug === true)
+                {
+                    $cost=get_password_cost();
+                    $db=open_db("db/calendar.sqlite",SQLITE3_OPEN_READWRITE);
+                    if(password_needs_rehash($password,PASSWORD_DEFAULT,array("cost"=>$cost)))
+                    {
+                        update_password($db,$login,password_hash($_POST['password'],PASSWORD_DEFAULT,array("cost"=>$cost)));
+                    }
+                    $debug=set_last_login($db,$login);
+                    if($debug === true)
+                    {
+                        echo ("<script type=\"text/javascript\">window.location = \"index.php?in=yes\"</script>");
+                    }
+                    else
+                    {
+                        trigger_error("Failed to execute necessary backend updates. Expect problems.",E_USER_WARNING);
+                    }
+                }
+                else
+                {
+                    trigger_error("Failed to execute necessary backend updates. Expect problems.",E_USER_WARNING);
+                }
 			}
 			else
 			{
