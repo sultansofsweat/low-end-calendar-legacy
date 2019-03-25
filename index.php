@@ -373,7 +373,7 @@
   <?php
 	if(isset($user) && isset($user[2]) && $user[2] >= 3)
 	{
-		echo ("<a href=\"system.php\">Change system settings</a><br>\r\n<a href=\"edituser.php\">Modify a user's details</a><br>\r\n<a href=\"deleteuser.php\">Delete a user</a>");
+		echo ("<a href=\"system.php\">Change system settings</a><br>\r\n<a href=\"viewlogins.php\">View user login information</a><br>\r\n<a href=\"edituser.php\">Modify a user's details</a><br>\r\n<a href=\"deleteuser.php\">Delete a user</a>");
 	}
 	if(isset($user) && isset($user[2]) && $user[2] >= 4)
 	{
