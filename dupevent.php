@@ -32,7 +32,6 @@
 	{
 		if($id === false || $event === false || $month === false || $day === false || $year === false)
 		{
-			var_dump($event);
 			return false;
 		}
 		$time=strtotime($month . " " . $day . " " . $year);
@@ -61,8 +60,6 @@
 					$infos[1]=false;
 					if($infos[0] != "")
 					{
-						/*$infos[1]=get_event($db,$infos[0]);
-						array_unshift($infos[1],intval($infos[0]));*/
 						$valid=event_display_prepare($user[0],$user[2],get_all_events($db));
 						foreach($valid as $checkevent)
 						{
@@ -72,13 +69,6 @@
 								array_unshift($infos[1],intval($infos[0]));
 							}
 						}
-						/*echo("<pre>");
-						var_dump($valid);
-						echo("</pre>\r\n");
-						if(!in_array($infos[1],$valid))
-						{
-							$infos[1]=false;
-						}*/
 						unset($valid,$checkevent);
 					}
 					else
@@ -139,18 +129,15 @@
 					}
 					$odetails=get_user($db,$edetails[2]);
 					$description="[This event was duplicated from an event created by " . $odetails[1] . " on " . date("l F j, o, g:i A",$edetails[10]) . "] " . $edetails[6];
-					echo("<pre>");
-					var_dump(array($edetails[1],$_SESSION['username'],$edetails[9],$stime,$etime,$edetails[5],$description,$invitees,$edetails[8],time(),$edetails[11]));
-					echo("</pre>\r\n");
 					$debug=insert_event($db,$edetails[1],$_SESSION['username'],$edetails[9],$stime,$etime,$edetails[5],$description,$invitees,$edetails[8],time(),$edetails[11]);
-					/*if($debug === true)
+					if($debug === true)
 					{
 						echo ("<script type=\"text/javascript\">window.location = \"index.php?ade=yes\"</script>");
 					}
 					else
 					{
 						echo ("<script type=\"text/javascript\">window.location = \"index.php?ade=no\"</script>");
-					}*/
+					}
 				}
 				else
 				{
