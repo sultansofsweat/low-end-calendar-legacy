@@ -33,7 +33,7 @@
 	{
 		$db=open_db("db/calendar.sqlite",SQLITE3_OPEN_READONLY);
 		$user=get_user($db,$_SESSION['username']);
-		if(!isset($user[2]) || $user[2] < 3)
+		if(!isset($user[2]) || $user[2] < 1)
 		{
 			die("<script type=\"text/javascript\">window.location = \"index.php?bad=yes\"</script>");
 		}
@@ -53,31 +53,50 @@
   </p>
   <h1>Low End Calendar-View User Login History</h1>
   <table width="100%">
-  <tr>
-  <th>Login Name</th>
-  <th>User Name</th>
-  <th>Login Count</th>
-  <th>Last Logged In</th>
-  </tr>
   <?php
-	foreach($logins as $login)
-    {
-        echo("<tr>\r\n");
-        echo("<td>" . $login[0] . "</td>\r\n");
-        echo("<td>" . $login[1] . "</td>\r\n");
-        echo("<td>" . $login[2] . "</td>\r\n");
-        echo("<td>");
-        if($login[3] > 0)
-        {
-            echo date("l F jS, Y",$login[3]) . " at " . date("g:i A",$login[3]);
-        }
-        else
-        {
-            echo "Never";
-        }
-        echo("</td>\r\n");
-        echo("</tr>\r\n");
-    }
+	if(isset($user[2]) && $user[2] > 2)
+	{
+		echo("<tr>\r\n<th>Login Name</th>\r\n<th>User Name</th>\r\n<th>Login Count</th>\r\n<th>Last Logged In</th>\r\n</tr>");
+		foreach($logins as $login)
+		{
+			echo("<tr>\r\n");
+			echo("<td>" . $login[0] . "</td>\r\n");
+			echo("<td>" . $login[1] . "</td>\r\n");
+			echo("<td>" . $login[2] . "</td>\r\n");
+			echo("<td>");
+			if($login[3] > 0)
+			{
+				echo date("l F jS, Y",$login[3]) . " at " . date("g:i A",$login[3]);
+			}
+			else
+			{
+				echo "Never";
+			}
+			echo("</td>\r\n");
+			echo("</tr>\r\n");
+		}
+	}
+	else
+	{
+		echo("<tr>\r\n<th>User Name</th>\r\n<th>Login Count</th>\r\n<th>Last Logged In</th>\r\n</tr>");
+		foreach($logins as $login)
+		{
+			echo("<tr>\r\n");
+			echo("<td>" . $login[1] . "</td>\r\n");
+			echo("<td>" . $login[2] . "</td>\r\n");
+			echo("<td>");
+			if($login[3] > 0)
+			{
+				echo date("l F jS, Y",$login[3]) . " at " . date("g:i A",$login[3]);
+			}
+			else
+			{
+				echo "Never";
+			}
+			echo("</td>\r\n");
+			echo("</tr>\r\n");
+		}
+	}
   ?>
   </table>
   <p><a href="index.php">Go back</a></p>

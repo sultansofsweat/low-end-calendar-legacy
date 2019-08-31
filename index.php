@@ -375,6 +375,10 @@
 	{
 		echo ("<a href=\"system.php\">Change system settings</a><br>\r\n<a href=\"viewlogins.php\">View user login information</a><br>\r\n<a href=\"edituser.php\">Modify a user's details</a><br>\r\n<a href=\"deleteuser.php\">Delete a user</a>");
 	}
+	elseif(isset($user) && isset($user[2]) && $user[2] >= 1)
+	{
+		echo ("<a href=\"viewlogins.php\">View user login information</a>");
+	}
 	if(isset($user) && isset($user[2]) && $user[2] >= 4)
 	{
 		echo ("<br>\r\n<a href=\"adduser.php\">Create a user</a><br>\r\n<a href=\"optdb.php\">Optimize database</a><br>\r\n<a href=\"delcal.php\">Delete all calendar entries</a><br>\r\n<a href=\"delsess.php\">Delete all session save files</a>");
