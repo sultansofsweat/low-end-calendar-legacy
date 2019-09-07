@@ -93,7 +93,6 @@
 	{
 		$events=array();
 		$nevents=array();
-		//echo("<pre>");
 		if(count($eventlist) > 0)
 		{
 			foreach($eventlist as $event)
@@ -137,7 +136,6 @@
 				}
 			}
 		}
-		//echo("</pre>\r\n");
 		usort($events,"sort_events");
 		return array_slice($events,0,5);
 	}
@@ -298,13 +296,11 @@
 	{
 		$user=get_user($db,$_SESSION['username']);
 		$nextfive=get_next_five(event_display_prepare($user[0],$user[2],$events));
-		//usort($nextfive,"sort_events");
 		echo ("Hello, " . $user[1] . " (" . $user[0] . ")! <a href=\"logout.php\">Log out</a> | <a href=\"settings.php\">Preferences</a>");
 	}
 	else
 	{
 		echo("Hello, guest! <a href=\"login.php\">Log in</a>");
-		//$nextfive=event_display_prepare("",0,get_next_five($events));
 		$nextfive=get_next_five(event_display_prepare("",0,$events));
 		if($reg == "yes")
 		{
@@ -338,22 +334,33 @@
 		{
 			foreach($nextfive as $event)
 			{
+				if(date("l F j, o",$event[3]) == date("l F j, o"))
+				{
+					$dateflag=true;
+					echo("<b>");
+				}
 				if($event[5] == 1)
 				{
-					echo ("<a href=\"viewevent.php?id=" . $event[0] . "\">" . date("l F j, o",$event[3]));
+					echo("<a href=\"viewevent.php?id=" . $event[0] . "\">" . date("l F j, o",$event[3]));
 				}
 				else
 				{
-					echo ("<a href=\"viewevent.php?id=" . $event[0] . "\">" . date("l F j, o, g:i A",$event[3]));
-					echo (" (ends " . date("l F j, o, g:i A",$event[4]) . ")");
+					echo("<a href=\"viewevent.php?id=" . $event[0] . "\">" . date("l F j, o, g:i A",$event[3]));
+					echo(" (ends " . date("l F j, o, g:i A",$event[4]) . ")");
 				}
-				echo (": " . $event[1] . "</a><br>\r\n");
+				echo(": " . $event[1] . "</a>");
+				if(!empty($dateflag))
+				{
+					echo("</b>");
+				}
+				echo("<br>\r\n");
 			}
 		}
 		else
 		{
 			echo ("No events exist in the system yet.");
 		}
+		echo("Note: events in <b>bold</b> occur today.<br>\r\n");
 	}
 	else
 	{
@@ -410,7 +417,7 @@
   ?>
   </p>
   <hr>
-  <h6>Low End Calendar is copyright &copy; 2017-2018 Brad Hunter/CarnelProd666. All rights are reserved. Built on pure PHP and CSS, no JavaScript here (except for enabling redirecting). Direct all bug reports, compliments, and hatemail <a href="http://firealarms.redbat.ca/contact.php">here</a>.<br>
+  <h6>Low End Calendar is copyright &copy; 2017-2019 Brad Hunter/CarnelProd666. All rights are reserved. Built on pure PHP and CSS, no JavaScript here (except for enabling redirecting). Direct all bug reports, compliments, and hatemail <a href="http://firealarms.redbat.ca/contact.php">here</a>.<br>
   LECal software release <?php echo $version[0] ?> revision <?php echo $version[1] ?>, revision <?php echo $version[2] ?> overall.</h6>
   </body>
 </html>

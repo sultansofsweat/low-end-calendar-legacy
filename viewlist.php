@@ -8,7 +8,7 @@
 	}
 	else
 	{
-		$style="styles/default.css";
+		$style=get_default_style();
 	}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
@@ -78,6 +78,7 @@
   <?php
 	if(count($events) > 0)
 	{
+		$today=array();
 		$active=array();
 		$past=array();
 		foreach($events as $event)
@@ -110,7 +111,14 @@
 			$time=time();
 			if((($event[5] == 1 && $time < ($event[3]+(24*60*60))) || $time < $event[3] || ($time >= $event[3] && $event[4] > 0 && $time < $event[4])))
 			{
-				$active[]=$edetails;
+				if(date("l F j, o",$event[3]) == date("l F j, o"))
+				{
+					$today[]=$edetails;
+				}
+				else
+				{
+					$active[]=$edetails;
+				}
 			}
 			elseif($event[11] != "")
 			{
@@ -182,7 +190,14 @@
 								$nedetails[0].="<a href=\"viewevent.php?id=" . $nevent[0] . "\">" . date("l F j, o, g:i A",$nevent[3]) . " (ends " . date("l F j, o, g:i A",$nevent[4]) . ")";
 							}
 							$nedetails[0].=": " . $nevent[1] . "</a></p>\r\n";
-							$active[]=$nedetails;
+							if(date("l F j, o",$nevent[3]) == date("l F j, o"))
+							{
+								$today[]=$nedetails;
+							}
+							else
+							{
+								$active[]=$nedetails;
+							}
 							break;
 						}
 						$mult+=$repeat[0];
@@ -199,9 +214,16 @@
 			}
 		}
 		
+		usort($today,"sort_events");
 		usort($active,"sort_events");
 		usort($past,"sort_events");
+		$past=array_reverse($past);
 		
+		echo ("<p><b><u>Today's Events</u></b></p>\r\n");
+		foreach($today as $edetails)
+		{
+			echo $edetails[0];
+		}
 		echo ("<p><b><u>Active Events</u></b></p>\r\n");
 		foreach($active as $edetails)
 		{
