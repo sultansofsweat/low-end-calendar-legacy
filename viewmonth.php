@@ -128,6 +128,7 @@
 					{
 						$repeat=explode(",",$event[11]);
 						$rtime=$event[3];
+						$time=time();
 						if($repeat[1] > $time)
 						{
 							$etime=$repeat[1];
