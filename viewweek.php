@@ -63,7 +63,7 @@
 		else
 		{
 			$time=$event[3] - ((date("i",$event[3]) % 10)*60);
-			$etime=$event[4] - ((date("i",$event[4]) % 10)*60) + 600;
+			$etime=($event[4]-(10*60)) - ((date("i",$event[4]) % 10)*60) + 600;
 			
 			while($time < $etime)
 			{
@@ -166,7 +166,7 @@
 									$dispretime=$retime;
 								}
 								$nevent=array($event[0],$event[1],$event[2],$disprtime,$dispretime,$event[5],$event[6],$event[7],$event[8],$event[9],$event[10],$event[11]);
-								if(in_array(date("n/j/Y",$nevent[3]),$dates) || ($nevent[5] == 0 && in_array(date("n/j/Y",$nevent[4]),$dates)))
+								if(in_array(date("n/j/Y",$nevent[3]),$dates) || ($nevent[5] == 0 && ((in_array(date("n/j/Y",$nevent[4]),$dates) && date("g:i A",$nevent[4]) != "12:00 AM") || (date("g:i A",$nevent[4]) == "12:00 AM" && in_array(date("n/j/Y",($nevent[4]-10*60)),$dates)))))
 								{
 									insert_into_list($list,$nevent);
 									break;
@@ -259,7 +259,7 @@
 										$dispretime=$retime;
 									}
 									$nevent=array($event[0],$event[1],$event[2],$disprtime,$dispretime,$event[5],$event[6],$event[7],$event[8],$event[9],$event[10],$event[11]);
-									if(in_array(date("n/j/Y",$nevent[3]),$dates) || ($nevent[5] == 0 && in_array(date("n/j/Y",$nevent[4]),$dates)))
+									if(in_array(date("n/j/Y",$nevent[3]),$dates) || ($nevent[5] == 0 && ((in_array(date("n/j/Y",$nevent[4]),$dates) && date("g:i A",$nevent[4]) != "12:00 AM") || (date("g:i A",$nevent[4]) == "12:00 AM" && in_array(date("n/j/Y",($nevent[4]-10*60)),$dates)))))
 									{
 										insert_into_list($list,$nevent);
 										break;
@@ -333,7 +333,7 @@
 			}
 			echo (substr($dlist["allday"],0,-8) . "</td>\r\n");
 		}
-		echo("</tr>\r\n");
+		echo("</tr>\r\n<tr>\r\n<td colspan=\"8\"></td>\r\n</tr>\r\n");
 		foreach($t as $x)
 		{
 			foreach($h as $y)

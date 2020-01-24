@@ -65,13 +65,13 @@
 			$owner=$odetails[1];
 			if($event[4] == 1)
 			{
-				$start=date("l F j, o",$event[2]);
+				$start=date("l F j, Y",$event[2]);
 				$end="This is an all-day event.";
 			}
 			else
 			{
-				$start=date("l F j, o",$event[2]) . " at " . date("g:i A",$event[2]);
-				$end=date("l F j, o",$event[3]) . " at " . date("g:i A",$event[3]);
+				$start=date("l F j, Y",$event[2]) . " at " . date("g:i A",$event[2]);
+				$end=date("l F j, Y",$event[3]) . " at " . date("g:i A",$event[3]);
 			}
 			$description=$event[5];
 			if(strpos($event[8],"http") !== false)
@@ -107,7 +107,7 @@
 			}
 			if($event[9] > 0)
 			{
-				$created=date("l F j, o",$event[9]) . " at " . date("g:i A",$event[9]);
+				$created=date("l F j, Y",$event[9]) . " at " . date("g:i A",$event[9]);
 			}
 			else
 			{

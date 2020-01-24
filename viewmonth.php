@@ -41,7 +41,7 @@
 		}
 		else
 		{
-			$etime=strtotime(date("n/j/Y",$event[4]));
+			$etime=strtotime(date("n/j/Y",($event[4]-(10*60))));
 		}
 		while($time <= $etime)
 		{

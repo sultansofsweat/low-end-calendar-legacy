@@ -63,7 +63,7 @@
 		else
 		{
 			$time=$event[3] - ((date("i",$event[3]) % 10)*60);
-			$etime=$event[4] - ((date("i",$event[4]) % 10)*60) + 600;
+			$etime=($event[4]-(10*60)) - ((date("i",$event[4]) % 10)*60) + 600;
 			while($time < $etime)
 			{
 				if(date("n/j/Y",$time) == $date && isset($list[date("g:i A",$time)]))
@@ -75,6 +75,7 @@
 		}
 	}
 	
+	$list=array();
 	if(isset($_SESSION['username']) && $_SESSION['username'] != "")
 	{
 		$db=open_db("db/calendar.sqlite",SQLITE3_OPEN_READONLY);

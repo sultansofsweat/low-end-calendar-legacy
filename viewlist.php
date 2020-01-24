@@ -2,6 +2,7 @@
 	session_save_path("sessions");
 	session_set_cookie_params(0,"/",$_SERVER['HTTP_HOST'],false,true);
 	session_start();
+	include("functions.php");
 	if(isset($_SESSION['style']) && file_exists("styles/" . $_SESSION['style'] . ".css"))
 	{
 		$style="styles/" . $_SESSION['style'] . ".css";
@@ -25,7 +26,6 @@
   </head>
   <body>
   <?php
-	include("functions.php");
 	function sort_events($a,$b)
 	{
 		if(!isset($a[1]) || !isset($b[1]) || $a[1] == $b[1])
