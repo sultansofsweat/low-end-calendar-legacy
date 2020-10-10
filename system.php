@@ -146,6 +146,7 @@
 			$name=get_setting($db,"calendarname");
             $style=get_setting($db,"stylesheet");
 			$debug=close_db($db);
+			$styles=get_all_styles();
 			if($debug === false)
 			{
 				trigger_error("The server has caused a criticality accident and the database became irradiated.",E_USER_WARNING);
@@ -167,7 +168,7 @@
   Allow logged out users to see events: <input type="radio" name="open" value="yes" <?php if(isset($_POST['open']) && $_POST['open'] == "yes") { echo "checked=\"checked\""; } elseif(isset($open) && $open == "yes") { echo "checked=\"checked\""; } ?>>Yes | <input type="radio" name="open" value="no" <?php if(isset($_POST['open']) && $_POST['open'] == "no") { echo "checked=\"checked\""; } elseif(isset($open) && $open == "no") { echo "checked=\"checked\""; } ?>>No<br>
   Default <a href="http://firealarms.redbat.ca/timezone/index.php">timezone</a>: <input type="text" name="timezone" value="<?php if(isset($_POST['timezone'])) { echo $_POST['timezone']; } elseif(isset($timezone)) { echo $timezone; }?>"><br>
   Default style: <select name="style">
-  <option value="white" <?php if(isset($_POST['style']) && $_POST['style'] == "white") { echo "selected=\"selected\""; } elseif(isset($style) && $style == "white") { echo "selected=\"selected\""; }?>>White</option>
+  <!--<option value="white" <?php if(isset($_POST['style']) && $_POST['style'] == "white") { echo "selected=\"selected\""; } elseif(isset($style) && $style == "white") { echo "selected=\"selected\""; }?>>White</option>
   <option value="black" <?php if(isset($_POST['style']) && $_POST['style'] == "black") { echo "selected=\"selected\""; } elseif(isset($style) && $style == "black") { echo "selected=\"selected\""; }?>>Black</option>
   <option value="blue" <?php if(isset($_POST['style']) && $_POST['style'] == "blue") { echo "selected=\"selected\""; } elseif(isset($style) && $style == "blue") { echo "selected=\"selected\""; }?>>Blue</option>
   <option value="green" <?php if(isset($_POST['style']) && $_POST['style'] == "green") { echo "selected=\"selected\""; } elseif(isset($style) && $style == "green") { echo "selected=\"selected\""; }?>>Green</option>
@@ -186,7 +187,22 @@
   <option value="purple-large" <?php if(isset($_POST['style']) && $_POST['style'] == "purple-large") { echo "selected=\"selected\""; } elseif(isset($style) && $style == "purple-large") { echo "selected=\"selected\""; }?>>Purple (Large Text)</option>
   <option value="pink-large" <?php if(isset($_POST['style']) && $_POST['style'] == "pink-large") { echo "selected=\"selected\""; } elseif(isset($style) && $style == "pink-large") { echo "selected=\"selected\""; }?>>Pink (Large Text)</option>
   <option value="appliance-large" <?php if(isset($_POST['style']) && $_POST['style'] == "appliance-large") { echo "selected=\"selected\""; } elseif(isset($style) && $style == "appliance-large") { echo "selected=\"selected\""; }?>>Appliance (Large Text)</option>
-  <option value="sdp-large" <?php if(isset($_POST['style']) && $_POST['style'] == "sdp-large") { echo "selected=\"selected\""; } elseif(isset($style) && $style == "sdp-large") { echo "selected=\"selected\""; }?>>Stereo Dust Particles (Large Text)</option>
+  <option value="sdp-large" <?php if(isset($_POST['style']) && $_POST['style'] == "sdp-large") { echo "selected=\"selected\""; } elseif(isset($style) && $style == "sdp-large") { echo "selected=\"selected\""; }?>>Stereo Dust Particles (Large Text)</option>-->
+  <?php
+	foreach($styles as $file=>$display)
+	{
+		echo("<option value=\"$file\" ");
+		if(isset($_POST['style']) && $_POST['style'] == $file)
+		{
+			echo "selected=\"selected\"";
+		}
+		elseif(isset($style) && $style == $file)
+		{
+			echo "selected=\"selected\"";
+		}
+		echo(">$display</option>\r\n");
+	}
+  ?>
   </select><br>
   <input type="submit" value="Change settings"> or <input type="button" value="Cancel" onclick="window.location.href='index.php'">
   </form>

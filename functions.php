@@ -465,7 +465,7 @@
 		
 		while($entry=$result->fetchArray(SQLITE3_ASSOC))
 		{
-			$user=array("shonejob","Systemhad Onejob",1,"America/Toronto","default",false);
+			$user=array("shonejob","Systemhad Onejob",1,"America/Toronto","white",false);
 			if(isset($entry["Login"]))
 			{
 				$user[0]=$entry["Login"];
@@ -508,7 +508,7 @@
 	//Function for getting a user's information
 	function get_user($db,$login)
 	{
-		$user=array("shonejob","Systemhad Onejob",1,"America/Toronto","default",false);
+		$user=array("shonejob","Systemhad Onejob",1,"America/Toronto","white",false);
 		//Make sure a database is actually passed in
 		if(!is_a($db,"SQLite3"))
 		{
@@ -902,6 +902,51 @@
 		}
 		//Return formatted string
 		return "styles/$sheet.css";
+	}
+	//Function for getting all stylesheets as an array of form ["filename"=>"displayname"]
+	function get_all_styles()
+	{
+		//Initialize array
+		$styles=array();
+		//Check if list of stylesheets exists
+		if(file_exists("db/stylesheets.txt"))
+		{
+			//Read file and split by line (each line corresponds to one sheet)
+			$rawstyles=explode("\r\n",file_get_contents("db/stylesheets.txt"));
+			//Check and make sure entries exist
+			if(count($rawstyles) > 0)
+			{
+				//Loop through entries
+				foreach($rawstyles as $style)
+				{
+					//Split entry to filename and displayname
+					$style=explode("|",$style);
+					//Make sure format is OK
+					if(count($style) == 2)
+					{
+						//Add to list
+						$styles[$style[0]]=$style[1];
+					}
+					else
+					{
+						//Output notice and ignore
+						trigger_error("Stylesheet list entry \"" . implode("|",$style) . "\" is bogus and will be ignored.",E_USER_WARNING);
+					}
+				}
+			}
+			else
+			{
+				trigger_error("Stylesheet list empty, falling back to system defaults.",E_USER_WARNING);
+				$styles["white"]="White";
+			}
+		}
+		else
+		{
+			trigger_error("Stylesheet list does not exist, falling back to system defaults.",E_USER_WARNING);
+			$styles["white"]="White";
+		}
+		//Return list of stylesheets
+		return $styles;
 	}
 	
 	//Function for inserting a calendar event

@@ -1,0 +1,20 @@
+white|White
+black|Black
+blue|Blue
+green|Green
+yellow|Yellow
+rusty|Rusty
+purple|Purple
+pink|Pink
+appliance|Appliance
+sdp|Stereo Dust Particles
+white-large|White (Large Text)
+black-large|Black (Large Text)
+blue-large|Blue (Large Text)
+green-large|Green (Large Text)
+yellow-large|Yellow (Large Text)
+rusty-large|Rusty (Large Text)
+purple-large|Purple (Large Text)
+pink-large|Pink (Large Text)
+appliance-large|Appliance (Large Text)
+sdp-large|Stereo Dust Particles (Large Text)
