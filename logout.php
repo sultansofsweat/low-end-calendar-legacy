@@ -27,7 +27,6 @@
   <body>
   <p>
   <?php
-	
 	$disable=false;
 	if(isset($_POST['s']) && $_POST['s'] == "y")
 	{

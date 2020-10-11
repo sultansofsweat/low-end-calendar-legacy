@@ -358,7 +358,7 @@
 		}
 		else
 		{
-			echo ("No events exist in the system yet.");
+			echo ("No events exist in the system yet.<br>\r\n");
 		}
 		echo("Note: events in <b>bold</b> occur today.<br>\r\n");
 	}
