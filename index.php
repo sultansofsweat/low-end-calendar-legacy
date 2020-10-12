@@ -388,7 +388,7 @@
 	}
 	if(isset($user) && isset($user[2]) && $user[2] >= 4)
 	{
-		echo ("<br>\r\n<a href=\"adduser.php\">Create a user</a><br>\r\n<a href=\"optdb.php\">Optimize database</a><br>\r\n<a href=\"delcal.php\">Delete all calendar entries</a><br>\r\n<a href=\"delsess.php\">Delete all session save files</a>");
+		echo ("<br>\r\n<a href=\"viewerrors.php\">View error log</a><br>\r\n<a href=\"adduser.php\">Create a user</a><br>\r\n<a href=\"optdb.php\">Optimize database</a><br>\r\n<a href=\"delcal.php\">Delete all calendar entries</a><br>\r\n<a href=\"delsess.php\">Delete all session save files</a>");
 	}
   ?>
   </p>

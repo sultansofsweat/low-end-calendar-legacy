@@ -40,6 +40,9 @@
 		//Process error file
 		$file=basename($errfile);
 		
+		//Write message to database log
+		insert_error(open_db("db/calendar.sqlite",SQLITE3_OPEN_READWRITE),$file,$errline,$errno,$errstr);
+		
 		switch ($errno)
 		{
 			//User error
@@ -1917,4 +1920,324 @@
         }
         return $verinfo;
     }
+	
+	//Function for inserting error message
+	function insert_error($db,$page,$line,$code,$text)
+	{
+		//Make sure a database is actually passed in
+		if(!is_a($db,"SQLite3"))
+		{
+			trigger_error("Handle passed to function insert_error is not a valid database.",E_USER_WARNING);
+			return false;
+		}
+		//Prepare statement
+		$statement=$db->prepare("INSERT INTO errors(page,type,text,time) VALUES (?,?,?,?)");
+		if($statement === false)
+		{
+			trigger_error("Failed to prepare statement in function insert_error.",E_USER_WARNING);
+			goto finish;
+		}
+		//Bind variables to statement
+		$debug=$statement->bindValue(1,"$page:$line",SQLITE3_TEXT);
+		if($debug === false)
+		{
+			trigger_error("Failed to assign values to prepared statement in function insert_error.",E_USER_WARNING);
+			goto finish;
+		}
+		$debug=$statement->bindValue(2,$code,SQLITE3_INTEGER);
+		if($debug === false)
+		{
+			trigger_error("Failed to assign values to prepared statement in function insert_error.",E_USER_WARNING);
+			goto finish;
+		}
+		$debug=$statement->bindValue(3,$text,SQLITE3_TEXT);
+		if($debug === false)
+		{
+			trigger_error("Failed to assign values to prepared statement in function insert_error.",E_USER_WARNING);
+			goto finish;
+		}
+		$debug=$statement->bindValue(4,time(),SQLITE3_INTEGER);
+		if($debug === false)
+		{
+			trigger_error("Failed to assign values to prepared statement in function insert_error.",E_USER_WARNING);
+			goto finish;
+		}
+		//Execute statement
+		$result=$statement->execute();
+		if($result === false)
+		{
+			trigger_error("Failed to insert error message.",E_USER_WARNING);
+			goto finish;
+		}
+		
+		//Close statement
+		$statement->close();
+		unset($statement);
+		//Success
+		return true;
+		
+		finish:
+		//Close statement if necessary
+		if(isset($statement) && is_a($statement,"SQLite3Stmt"))
+		{
+			$statement->close();
+			unset($statement);
+		}
+		//Failure
+		return false;
+	}
+	//Function for marking error log as read
+	function mark_error_log_as_read($db)
+	{
+		//Make sure a database is actually passed in
+		if(!is_a($db,"SQLite3"))
+		{
+			trigger_error("Handle passed to function mark_error_log_as_read is not a valid database.",E_USER_WARNING);
+			return false;
+		}
+		//Prepare statement
+		$statement=$db->prepare("UPDATE errors SET unread = 0");
+		if($statement === false)
+		{
+			trigger_error("Failed to prepare statement in function mark_error_log_as_read.",E_USER_WARNING);
+			goto finish;
+		}
+		//Execute statement
+		$result=$statement->execute();
+		if($result === false)
+		{
+			trigger_error("Failed to mark log as read.",E_USER_WARNING);
+			goto finish;
+		}
+		
+		//Close statement
+		$statement->close();
+		unset($statement);
+		//Success
+		return true;
+		
+		finish:
+		//Close statement if necessary
+		if(isset($statement) && is_a($statement,"SQLite3Stmt"))
+		{
+			$statement->close();
+			unset($statement);
+		}
+		//Failure
+		return false;
+	}
+	//Function for marking error log as unread
+	function mark_error_log_as_unread($db)
+	{
+		//Make sure a database is actually passed in
+		if(!is_a($db,"SQLite3"))
+		{
+			trigger_error("Handle passed to function mark_error_log_as_unread is not a valid database.",E_USER_WARNING);
+			return false;
+		}
+		//Prepare statement
+		$statement=$db->prepare("UPDATE errors SET unread = 1");
+		if($statement === false)
+		{
+			trigger_error("Failed to prepare statement in function mark_error_log_as_unread.",E_USER_WARNING);
+			goto finish;
+		}
+		//Execute statement
+		$result=$statement->execute();
+		if($result === false)
+		{
+			trigger_error("Failed to mark log as unread.",E_USER_WARNING);
+			goto finish;
+		}
+		
+		//Close statement
+		$statement->close();
+		unset($statement);
+		//Success
+		return true;
+		
+		finish:
+		//Close statement if necessary
+		if(isset($statement) && is_a($statement,"SQLite3Stmt"))
+		{
+			$statement->close();
+			unset($statement);
+		}
+		//Failure
+		return false;
+	}
+	//Function for clearing error log
+	function clear_error_log($db)
+	{
+		//Make sure a database is actually passed in
+		if(!is_a($db,"SQLite3"))
+		{
+			trigger_error("Handle passed to function clear_error_log is not a valid database.",E_USER_WARNING);
+			return false;
+		}
+		//Prepare statement
+		$statement=$db->prepare("DELETE FROM errors");
+		if($statement === false)
+		{
+			trigger_error("Failed to prepare statement in function clear_error_log.",E_USER_WARNING);
+			goto finish;
+		}
+		//Execute statement
+		$result=$statement->execute();
+		if($result === false)
+		{
+			trigger_error("Failed to clear log.",E_USER_WARNING);
+			goto finish;
+		}
+		
+		//Close statement
+		$statement->close();
+		unset($statement);
+		//Success
+		return true;
+		
+		finish:
+		//Close statement if necessary
+		if(isset($statement) && is_a($statement,"SQLite3Stmt"))
+		{
+			$statement->close();
+			unset($statement);
+		}
+		//Failure
+		return false;
+	}
+	//Function for getting entire error log
+	function get_all_errors($db)
+	{
+		$events=array();
+		//Make sure a database is actually passed in
+		if(!is_a($db,"SQLite3"))
+		{
+			trigger_error("Handle passed to function get_all_errors is not a valid database.",E_USER_WARNING);
+			return $event;
+		}
+		//Prepare statement
+		$statement=$db->prepare("SELECT page,type,text,time,unread FROM errors ORDER BY time DESC");
+		if($statement === false)
+		{
+			trigger_error("Failed to prepare statement in function get_all_errors.",E_USER_WARNING);
+			goto finish;
+		}
+		//Execute statement
+		$result=$statement->execute();
+		if($result === false)
+		{
+			trigger_error("Failed to get error log.",E_USER_WARNING);
+			goto finish;
+		}
+		
+		while($entry=$result->fetchArray(SQLITE3_ASSOC))
+		{
+			$event=array("systemhad:onejob",-1,"The system only had ONE JOB and should now have a GPX clock radio thrown at it.",0,false);
+			if(!empty($entry["Page"]))
+			{
+				$event[0]=$entry["Page"];
+			}
+			if(!empty($entry["Type"]))
+			{
+				$event[1]=$entry["Type"];
+			}
+			if(!empty($entry["Text"]))
+			{
+				$event[2]=$entry["Text"];
+			}
+			if(!empty($entry["Time"]))
+			{
+				$event[3]=$entry["Time"];
+			}
+			if(!empty($entry["Unread"]))
+			{
+				$event[4]=true;
+			}
+			$events[]=$event;
+		}
+		
+		//Close statement
+		$statement->close();
+		unset($statement);
+		//Success
+		return $events;
+		
+		finish:
+		//Close statement if necessary
+		if(isset($statement) && is_a($statement,"SQLite3Stmt"))
+		{
+			$statement->close();
+			unset($statement);
+		}
+		//Failure
+		return $events;
+	}
+	//Function for getting unread errors
+	function get_unread_errors($db)
+	{
+		$events=array();
+		//Make sure a database is actually passed in
+		if(!is_a($db,"SQLite3"))
+		{
+			trigger_error("Handle passed to function get_unread_errors is not a valid database.",E_USER_WARNING);
+			return $event;
+		}
+		//Prepare statement
+		$statement=$db->prepare("SELECT page,type,text,time,unread FROM errors WHERE unread = 1 ORDER BY time DESC");
+		if($statement === false)
+		{
+			trigger_error("Failed to prepare statement in function get_unread_errors.",E_USER_WARNING);
+			goto finish;
+		}
+		//Execute statement
+		$result=$statement->execute();
+		if($result === false)
+		{
+			trigger_error("Failed to get error log.",E_USER_WARNING);
+			goto finish;
+		}
+		
+		while($entry=$result->fetchArray(SQLITE3_ASSOC))
+		{
+			$event=array("systemhad:onejob",-1,"The system only had ONE JOB and should now have a GPX clock radio thrown at it.",0,false);
+			if(!empty($entry["Page"]))
+			{
+				$event[0]=$entry["Page"];
+			}
+			if(!empty($entry["Type"]))
+			{
+				$event[1]=$entry["Type"];
+			}
+			if(!empty($entry["Text"]))
+			{
+				$event[2]=$entry["Text"];
+			}
+			if(!empty($entry["Time"]))
+			{
+				$event[3]=$entry["Time"];
+			}
+			if(!empty($entry["Unread"]))
+			{
+				$event[4]=true;
+			}
+			$events[]=$event;
+		}
+		
+		//Close statement
+		$statement->close();
+		unset($statement);
+		//Success
+		return $events;
+		
+		finish:
+		//Close statement if necessary
+		if(isset($statement) && is_a($statement,"SQLite3Stmt"))
+		{
+			$statement->close();
+			unset($statement);
+		}
+		//Failure
+		return $events;
+	}
 ?>
