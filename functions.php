@@ -4,6 +4,7 @@
 	//Legacy password handling function
     function old_password_verify($password,$hash)
     {
+		trigger_error("Function old_password_verify is deprecated and will be removed in a future release of LECal.",E_USER_DEPRECATED);
         $hp=hash("whirlpool",$password);
         return($hp == $hash);
     }
@@ -289,7 +290,6 @@
 	//Function for updating user's password
 	function update_password($db,$login,$password)
 	{
-		trigger_error("Function update_password is deprecated and will be removed in a future release of LECal.",E_USER_DEPRECATED);
 		//Make sure a database is actually passed in
 		if(!is_a($db,"SQLite3"))
 		{
