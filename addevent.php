@@ -110,7 +110,7 @@
 				{
 					$infos[0]=filter_var($_POST['name'],FILTER_SANITIZE_STRING);
 				}
-				if(isset($_POST['owner']) && count(get_user($db,preg_replace("/[^A-Za-z0-9]/","",$_POST['owner'])) == 5))
+				if(isset($_POST['owner']) && count(get_user($db,preg_replace("/[^A-Za-z0-9]/","",$_POST['owner']))) == 5)
 				{
 					$infos[1]=preg_replace("/[^A-Za-z0-9]/","",$_POST['owner']);
 				}

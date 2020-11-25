@@ -125,6 +125,52 @@
 				die("<script type=\"text/javascript\">window.location = \"index.php?ede=nbe\"</script>");
 			}
 		}
+		elseif(isset($_POST['s']))
+		{
+			$id=preg_replace("/[^0-9]/","",$_POST['s']);
+			$event=get_event($db,$id);
+			if($event !== false && ($user[2] >= 3 || $event[1] == $user[0]))
+			{
+				//FORMAT: Name,Owner,Start,End,Allday,Description,Invitees,Private,Location,Created,Repeat
+				$month=date("F",$event[2]);
+				$day=date("j",$event[2]);
+				$year=date("Y",$event[2]);
+				$shour=date("g",$event[2]);
+				$sminute=date("i",$event[2]);
+				$smerid=date("A",$event[2]);
+				if($event[3] > 0)
+				{
+					$duration=($event[3]-$event[2])/60;
+				}
+				else
+				{
+					$duration=3;
+				}
+				if($event[10] != "")
+				{
+					$repeat="yes";
+					$rinfo=explode(",",$event[10]);
+					$frequency=$rinfo[0];
+					$rmonth=date("F",$rinfo[1]);
+					$rday=date("j",$rinfo[1]);
+					$ryear=date("Y",$rinfo[1]);
+				}
+				else
+				{
+					$repeat="no";
+					$frequency=1;
+					$etime=time()+(30*24*60*60);
+					$rmonth=date("F",$etime);
+					$rday=date("j",$etime);
+					$ryear=date("Y",$etime);
+				}
+				$users=get_all_users($db);
+			}
+			else
+			{
+				die("<script type=\"text/javascript\">window.location = \"index.php?ede=nbe\"</script>");
+			}
+		}
 		else
 		{
 			die("<script type=\"text/javascript\">window.location = \"index.php?ede=nid\"</script>");
@@ -157,7 +203,7 @@
 				{
 					$infos[0]=filter_var($_POST['name'],FILTER_SANITIZE_STRING);
 				}
-				if(isset($_POST['owner']) && count(get_user($db,preg_replace("/[^A-Za-z0-9]/","",$_POST['owner'])) == 5))
+				if(isset($_POST['owner']) && count(get_user($db,preg_replace("/[^A-Za-z0-9]/","",$_POST['owner']))) == 5)
 				{
 					$infos[1]=preg_replace("/[^A-Za-z0-9]/","",$_POST['owner']);
 				}
@@ -300,7 +346,7 @@
 					}
 				}
 				
-				if(check_if_valid($infos[0],$infos[2],$infos[3],$infos[4],$infos[5],$infos[6],$infos[7],$infos[8],$infos[10],$infos[9],$infos[12]) === true && $infos[1] !== false && $nfos[16] !== false && check_valid_repeat($infos[11],$infos[17],$infos[18],$infos[19]) !== false)
+				if(check_if_valid($infos[0],$infos[2],$infos[3],$infos[4],$infos[5],$infos[6],$infos[7],$infos[8],$infos[10],$infos[9],$infos[12]) === true && $infos[1] !== false && $infos[16] !== false && check_valid_repeat($infos[11],$infos[17],$infos[18],$infos[19]) !== false)
 				{
 					$stime=strtotime($infos[2] . " " . $infos[3] . ", " . $infos[4] . " " . $infos[5] . ":" . $infos[6] . " " . $infos[7]);
 					if($infos[11] !== false)
