@@ -27,7 +27,6 @@
   <body>
   <p>
   <?php
-	
 	function check_if_valid($name,$month,$day,$year,$shour,$sminute,$smerid,$allday,$duration,$dmod,$public)
 	{
 		if($name === false || $month === false || $day === false || $year === false || $shour === false || $sminute === false || $smerid === false || $public === false)
@@ -70,6 +69,32 @@
 		}
 		return false;
 	}
+	//Make sure user is signed in and perform basic setup operations
+	if(isset($_SESSION['username']) && $_SESSION['username'] != "")
+	{
+		$db=open_db("db/calendar.sqlite",SQLITE3_OPEN_READONLY);
+		$user=get_user($db,$_SESSION['username']);
+		if(isset($user[2]) && $user[2] < 2)
+		{
+			die("<script type=\"text/javascript\">window.location = \"index.php?bad=yes\"</script>");
+		}
+		$users=get_all_users($db);
+		$etime=time()+(30*24*60*60);
+		$rmonth=date("F",$etime);
+		$rday=date("j",$etime);
+		$ryear=date("Y",$etime);
+		$debug=close_db($db);
+		if($debug === false)
+		{
+			trigger_error("The server has caused a criticality accident and the database became irradiated.",E_USER_WARNING);
+		}
+	}
+	else
+	{
+		//Automatically deny access
+		die ("<script type=\"text/javascript\">window.location = \"index.php?bad=yes\"</script>");
+	}
+	//Process submission, if it exists
 	if(isset($_POST['s']) && $_POST['s'] == "y")
 	{
 		//Make sure user is logged in
@@ -285,31 +310,7 @@
 	}
 	else
 	{
-		//Make sure user is an administrator
-		if(isset($_SESSION['username']) && $_SESSION['username'] != "")
-		{
-			$db=open_db("db/calendar.sqlite",SQLITE3_OPEN_READONLY);
-			$user=get_user($db,$_SESSION['username']);
-			if(isset($user[2]) && $user[2] < 2)
-			{
-				die("<script type=\"text/javascript\">window.location = \"index.php?bad=yes\"</script>");
-			}
-			$users=get_all_users($db);
-			$etime=time()+(30*24*60*60);
-			$rmonth=date("F",$etime);
-			$rday=date("j",$etime);
-			$ryear=date("Y",$etime);
-			$debug=close_db($db);
-			if($debug === false)
-			{
-				trigger_error("The server has caused a criticality accident and the database became irradiated.",E_USER_WARNING);
-			}
-		}
-		else
-		{
-			//Automatically deny access
-			die ("<script type=\"text/javascript\">window.location = \"index.php?bad=yes\"</script>");
-		}
+		
 	}
   ?>
   </p>

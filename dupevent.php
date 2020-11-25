@@ -27,7 +27,6 @@
   <body>
   <p>
   <?php
-	
 	function check_if_valid($id,$event,$month,$day,$year)
 	{
 		if($id === false || $event === false || $month === false || $day === false || $year === false)
@@ -42,6 +41,28 @@
 		}
 		return true;
 	}
+	//Make sure user is signed in, and perform basic setup
+	if(isset($_SESSION['username']) && $_SESSION['username'] != "")
+	{
+		$db=open_db("db/calendar.sqlite",SQLITE3_OPEN_READONLY);
+		$user=get_user($db,$_SESSION['username']);
+		if(isset($user[2]) && $user[2] < 2)
+		{
+			die("<script type=\"text/javascript\">window.location = \"index.php?bad=yes\"</script>");
+		}
+		$events=event_display_prepare($user[0],$user[2],get_all_events($db));
+		$debug=close_db($db);
+		if($debug === false)
+		{
+			trigger_error("The server has caused a criticality accident and the database became irradiated.",E_USER_WARNING);
+		}
+	}
+	else
+	{
+		//Automatically deny access
+		die ("<script type=\"text/javascript\">window.location = \"index.php?bad=yes\"</script>");
+	}
+	//Process submission if it exists
 	if(isset($_POST['s']) && $_POST['s'] == "y")
 	{
 		//Make sure user is logged in
@@ -158,30 +179,6 @@
 		else
 		{
 			die("<script type=\"text/javascript\">window.location = \"index.php?bad=yes\"</script>");
-		}
-	}
-	else
-	{
-		//Make sure user is an administrator
-		if(isset($_SESSION['username']) && $_SESSION['username'] != "")
-		{
-			$db=open_db("db/calendar.sqlite",SQLITE3_OPEN_READONLY);
-			$user=get_user($db,$_SESSION['username']);
-			if(isset($user[2]) && $user[2] < 2)
-			{
-				die("<script type=\"text/javascript\">window.location = \"index.php?bad=yes\"</script>");
-			}
-			$events=event_display_prepare($user[0],$user[2],get_all_events($db));
-			$debug=close_db($db);
-			if($debug === false)
-			{
-				trigger_error("The server has caused a criticality accident and the database became irradiated.",E_USER_WARNING);
-			}
-		}
-		else
-		{
-			//Automatically deny access
-			die ("<script type=\"text/javascript\">window.location = \"index.php?bad=yes\"</script>");
 		}
 	}
   ?>

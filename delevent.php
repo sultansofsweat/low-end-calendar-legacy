@@ -27,14 +27,39 @@
   <body>
   <p>
   <?php
-	
+	//Make sure user is signed in, and perform basic setup
+	if(isset($_SESSION['username']) && $_SESSION['username'] != "")
+	{
+		$db=open_db("db/calendar.sqlite",SQLITE3_OPEN_READONLY);
+		$user=get_user($db,$_SESSION['username']);
+		if(isset($user[2]) && $user[2] < 2)
+		{
+			die("<script type=\"text/javascript\">window.location = \"index.php?bad=yes\"</script>");
+		}
+		$events=event_display_prepare_removal($user[0],$user[2],get_all_events($db));
+		if(isset($_GET['id']))
+		{
+			$id=preg_replace("/[^0-9]/","",$_GET['id']);
+		}
+		$debug=close_db($db);
+		if($debug === false)
+		{
+			trigger_error("The server has caused a criticality accident and the database became irradiated.",E_USER_WARNING);
+		}
+	}
+	else
+	{
+		//Automatically deny access
+		die ("<script type=\"text/javascript\">window.location = \"index.php?bad=yes\"</script>");
+	}
+	//Process form submission if it exists
 	if(isset($_POST['s']) && $_POST['s'] == "y" && isset($_POST['select']))
 	{
 		$id=preg_replace("/[^0-9]/","",$_POST['select']);
 		if($id == "" || $id < 1)
 		{
 			trigger_error("You must select an event first, you goat!",E_USER_WARNING);
-			$events=event_display_prepare($user[0],$user[2],get_all_events($db));
+			$events=event_display_prepare_removal($user[0],$user[2],get_all_events($db));
 			if(isset($_GET['id']))
 			{
 				$id=preg_replace("/[^0-9]/","",$_POST['select']);
@@ -51,7 +76,6 @@
 				$partlist=explode(",",$event[7]);
 				if($user[2] >= 3 || $user[0] == $event[1] || in_array($user[0],$partlist))
 				{
-					//die("Can delete event now.");
 					//Trash event
 					$debug=delete_event($db,$id);
 					if($debug === true)
@@ -67,22 +91,6 @@
 				{
 					die ("<script type=\"text/javascript\">window.location = \"index.php?bad=yes\"</script>");
 				}
-				/*else
-				{
-					if($user[2] < 3)
-					{
-						echo("User is not administrator.<br>");
-					}
-					if($user[0] != $event[1])
-					{
-						echo("User is not event owner.<br>");
-					}
-					if(!in_array($user[0],$partlist))
-					{
-						echo("User is not in participants list.<br>");
-					}
-					die("And the system is a piece of shit");
-				}*/
 			}
 			else
 			{
@@ -97,34 +105,6 @@
 		else
 		{
 			die("<script type=\"text/javascript\">window.location = \"index.php?bad=yes\"</script>");
-		}
-	}
-	else
-	{
-		//Make sure user is an administrator
-		if(isset($_SESSION['username']) && $_SESSION['username'] != "")
-		{
-			$db=open_db("db/calendar.sqlite",SQLITE3_OPEN_READONLY);
-			$user=get_user($db,$_SESSION['username']);
-			if(isset($user[2]) && $user[2] < 2)
-			{
-				die("<script type=\"text/javascript\">window.location = \"index.php?bad=yes\"</script>");
-			}
-			$events=event_display_prepare_removal($user[0],$user[2],get_all_events($db));
-			if(isset($_GET['id']))
-			{
-				$id=preg_replace("/[^0-9]/","",$_GET['id']);
-			}
-			$debug=close_db($db);
-			if($debug === false)
-			{
-				trigger_error("The server has caused a criticality accident and the database became irradiated.",E_USER_WARNING);
-			}
-		}
-		else
-		{
-			//Automatically deny access
-			die ("<script type=\"text/javascript\">window.location = \"index.php?bad=yes\"</script>");
 		}
 	}
   ?>

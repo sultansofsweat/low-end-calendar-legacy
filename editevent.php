@@ -70,6 +70,77 @@
 		}
 		return false;
 	}
+	//Make sure user is signed in, and perform basic setup
+	if(isset($_SESSION['username']) && $_SESSION['username'] != "")
+	{
+		$db=open_db("db/calendar.sqlite",SQLITE3_OPEN_READONLY);
+		$user=get_user($db,$_SESSION['username']);
+		if(isset($user[2]) && $user[2] < 2)
+		{
+			die("<script type=\"text/javascript\">window.location = \"index.php?bad=yes\"</script>");
+		}
+		if(isset($_GET['id']))
+		{
+			$id=preg_replace("/[^0-9]/","",$_GET['id']);
+			$event=get_event($db,$id);
+			if($event !== false && ($user[2] >= 3 || $event[1] == $user[0]))
+			{
+				//FORMAT: Name,Owner,Start,End,Allday,Description,Invitees,Private,Location,Created,Repeat
+				$month=date("F",$event[2]);
+				$day=date("j",$event[2]);
+				$year=date("Y",$event[2]);
+				$shour=date("g",$event[2]);
+				$sminute=date("i",$event[2]);
+				$smerid=date("A",$event[2]);
+				if($event[3] > 0)
+				{
+					$duration=($event[3]-$event[2])/60;
+				}
+				else
+				{
+					$duration=3;
+				}
+				if($event[10] != "")
+				{
+					$repeat="yes";
+					$rinfo=explode(",",$event[10]);
+					$frequency=$rinfo[0];
+					$rmonth=date("F",$rinfo[1]);
+					$rday=date("j",$rinfo[1]);
+					$ryear=date("Y",$rinfo[1]);
+				}
+				else
+				{
+					$repeat="no";
+					$frequency=1;
+					$etime=time()+(30*24*60*60);
+					$rmonth=date("F",$etime);
+					$rday=date("j",$etime);
+					$ryear=date("Y",$etime);
+				}
+				$users=get_all_users($db);
+			}
+			else
+			{
+				die("<script type=\"text/javascript\">window.location = \"index.php?ede=nbe\"</script>");
+			}
+		}
+		else
+		{
+			die("<script type=\"text/javascript\">window.location = \"index.php?ede=nid\"</script>");
+		}
+		$debug=close_db($db);
+		if($debug === false)
+		{
+			trigger_error("The server has caused a criticality accident and the database became irradiated.",E_USER_WARNING);
+		}
+	}
+	else
+	{
+		//Automatically deny access
+		die ("<script type=\"text/javascript\">window.location = \"index.php?bad=yes\"</script>");
+	}
+	//Process submission, if one exists
 	if(isset($_POST['s']) && $_POST['s'] != "")
 	{
 		//Make sure user is logged in
@@ -282,79 +353,6 @@
 		else
 		{
 			die("<script type=\"text/javascript\">window.location = \"index.php?bad=yes\"</script>");
-		}
-	}
-	else
-	{
-		//Make sure user is an administrator
-		if(isset($_SESSION['username']) && $_SESSION['username'] != "")
-		{
-			$db=open_db("db/calendar.sqlite",SQLITE3_OPEN_READONLY);
-			$user=get_user($db,$_SESSION['username']);
-			if(isset($user[2]) && $user[2] < 2)
-			{
-				die("<script type=\"text/javascript\">window.location = \"index.php?bad=yes\"</script>");
-			}
-			if(isset($_GET['id']))
-			{
-				$id=preg_replace("/[^0-9]/","",$_GET['id']);
-				$event=get_event($db,$id);
-				if($event !== false && ($user[2] >= 3 || $event[1] == $user[0]))
-				{
-					//FORMAT: Name,Owner,Start,End,Allday,Description,Invitees,Private,Location,Created,Repeat
-					$month=date("F",$event[2]);
-					$day=date("j",$event[2]);
-					$year=date("Y",$event[2]);
-					$shour=date("g",$event[2]);
-					$sminute=date("i",$event[2]);
-					$smerid=date("A",$event[2]);
-					if($event[3] > 0)
-					{
-						$duration=($event[3]-$event[2])/60;
-					}
-					else
-					{
-						$duration=3;
-					}
-					if($event[10] != "")
-					{
-						$repeat="yes";
-						$rinfo=explode(",",$event[10]);
-						$frequency=$rinfo[0];
-						$rmonth=date("F",$rinfo[1]);
-						$rday=date("j",$rinfo[1]);
-						$ryear=date("Y",$rinfo[1]);
-					}
-					else
-					{
-						$repeat="no";
-						$frequency=1;
-						$etime=time()+(30*24*60*60);
-						$rmonth=date("F",$etime);
-						$rday=date("j",$etime);
-						$ryear=date("Y",$etime);
-					}
-					$users=get_all_users($db);
-				}
-				else
-				{
-					die("<script type=\"text/javascript\">window.location = \"index.php?ede=nbe\"</script>");
-				}
-			}
-			else
-			{
-				die("<script type=\"text/javascript\">window.location = \"index.php?ede=nid\"</script>");
-			}
-			$debug=close_db($db);
-			if($debug === false)
-			{
-				trigger_error("The server has caused a criticality accident and the database became irradiated.",E_USER_WARNING);
-			}
-		}
-		else
-		{
-			//Automatically deny access
-			die ("<script type=\"text/javascript\">window.location = \"index.php?bad=yes\"</script>");
 		}
 	}
   ?>
