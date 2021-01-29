@@ -417,7 +417,7 @@
   ?>
   </p>
   <hr>
-  <h6>Low End Calendar is copyright &copy; 2017-2019 Brad Hunter/CarnelProd666. All rights are reserved. Built on pure PHP and CSS, no JavaScript here (except for enabling redirecting). Direct all bug reports, compliments, and hatemail <a href="http://firealarms.redbat.ca/contact.php">here</a>.<br>
+  <h6>Low End Calendar is copyright &copy; 2017-2021 Brad Hunter/CarnelProd666. All rights are reserved. Built on pure PHP and CSS, no JavaScript here (except for enabling redirecting). Direct all bug reports, compliments, and hatemail <a href="http://firealarms.mooo.com/contact.html">here</a>.<br>
   LECal software release <?php echo $version[0] ?> revision <?php echo $version[1] ?>, revision <?php echo $version[2] ?> overall.</h6>
   </body>
 </html>

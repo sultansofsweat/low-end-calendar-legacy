@@ -129,7 +129,7 @@
 						$repeat=explode(",",$event[11]);
 						$rtime=$event[3];
 						$time=time();
-						if($repeat[1] > $time)
+						if($repeat[1] > time())
 						{
 							$etime=$repeat[1];
 							$rtime += ($repeat[0]*7*24*60*60);
@@ -212,7 +212,7 @@
 						{
 							$repeat=explode(",",$event[11]);
 							$rtime=$event[3];
-							if($repeat[1] > $time)
+							if($repeat[1] > time())
 							{
 								$etime=$repeat[1];
 								$rtime += ($repeat[0]*7*24*60*60);
@@ -285,8 +285,22 @@
   <h1>Low End Calendar-View A Month's Events</h1>
   <p>Use the form below to select a month. Note that the month MUST be numerical! You may also run into issues with a two-digit year.</p>
   <form method="get" action="viewmonth.php">
-  Month: <input type="text" name="month" value="<?php if(isset($month)) { echo $month; } else { echo date("n"); } ?>"><br>
-  Year: <input type="text" name="year" value="<?php if(isset($year)) { echo $year; } else { echo date("Y"); } ?>"><br>
+  Month: <select name="month" required="required">
+  <option value="">-Select-</option>
+  <option value="1"<?php if(isset($month) && $month == 1) { echo " selected=\"selected\""; } elseif(!isset($month) && date("n") == 1) { echo " selected=\"selected\""; } ?>>January</option>
+  <option value="2"<?php if(isset($month) && $month == 2) { echo " selected=\"selected\""; } elseif(!isset($month) && date("n") == 2) { echo " selected=\"selected\""; } ?>>February</option>
+  <option value="3"<?php if(isset($month) && $month == 3) { echo " selected=\"selected\""; } elseif(!isset($month) && date("n") == 3) { echo " selected=\"selected\""; } ?>>March</option>
+  <option value="4"<?php if(isset($month) && $month == 4) { echo " selected=\"selected\""; } elseif(!isset($month) && date("n") == 4) { echo " selected=\"selected\""; } ?>>April</option>
+  <option value="5"<?php if(isset($month) && $month == 5) { echo " selected=\"selected\""; } elseif(!isset($month) && date("n") == 5) { echo " selected=\"selected\""; } ?>>May</option>
+  <option value="6"<?php if(isset($month) && $month == 6) { echo " selected=\"selected\""; } elseif(!isset($month) && date("n") == 6) { echo " selected=\"selected\""; } ?>>June</option>
+  <option value="7"<?php if(isset($month) && $month == 7) { echo " selected=\"selected\""; } elseif(!isset($month) && date("n") == 7) { echo " selected=\"selected\""; } ?>>July</option>
+  <option value="8"<?php if(isset($month) && $month == 8) { echo " selected=\"selected\""; } elseif(!isset($month) && date("n") == 8) { echo " selected=\"selected\""; } ?>>August</option>
+  <option value="9"<?php if(isset($month) && $month == 9) { echo " selected=\"selected\""; } elseif(!isset($month) && date("n") == 9) { echo " selected=\"selected\""; } ?>>September</option>
+  <option value="10"<?php if(isset($month) && $month == 10) { echo " selected=\"selected\""; } elseif(!isset($month) && date("n") == 10) { echo " selected=\"selected\""; } ?>>October</option>
+  <option value="11"<?php if(isset($month) && $month == 11) { echo " selected=\"selected\""; } elseif(!isset($month) && date("n") == 11) { echo " selected=\"selected\""; } ?>>November</option>
+  <option value="12"<?php if(isset($month) && $month == 12) { echo " selected=\"selected\""; } elseif(!isset($month) && date("n") == 12) { echo " selected=\"selected\""; } ?>>December</option>
+  </select><br>
+  Year: <input type="text" name="year" value="<?php if(isset($year)) { echo $year; } else { echo date("Y"); } ?>" required="required"><br>
   <input type="submit" value="View events">
   </form>
   <hr>

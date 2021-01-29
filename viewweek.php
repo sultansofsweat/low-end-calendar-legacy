@@ -286,11 +286,58 @@
   ?>
   </p>
   <h1>Low End Calendar-View A Week's Events</h1>
-  <p>Use the form below to select a day. The system will select and display events from all days of the week that contains the specified day. Note that the month MUST be numerical! You may also run into issues with a two-digit year.</p>
+  <p>Use the form below to select a day. The system will select and display events from all days of the week that contains the specified day. Selecting an invalid date (like February 31st for example) will probably summon nasal demons. Note also that you may run into issues with a two-digit year. Also note that sometimes the week the system picks doesn't contain the date you are looking for. This is a PHP problem. Trial and error is probably required.</p>
   <form method="get" action="viewweek.php">
-  Month: <input type="text" name="month" value="<?php if(isset($month)) { echo $month; } else { echo date("n"); } ?>"><br>
-  Day: <input type="text" name="day" value="<?php if(isset($day)) { echo $day; } else { echo date("j"); } ?>"><br>
-  Year: <input type="text" name="year" value="<?php if(isset($year)) { echo $year; } else { echo date("Y"); } ?>"><br>
+  Month: <select name="month" required="required">
+  <option value="">-Select-</option>
+  <option value="1"<?php if(isset($month) && $month == 1) { echo " selected=\"selected\""; } elseif(!isset($month) && date("n") == 1) { echo " selected=\"selected\""; } ?>>January</option>
+  <option value="2"<?php if(isset($month) && $month == 2) { echo " selected=\"selected\""; } elseif(!isset($month) && date("n") == 2) { echo " selected=\"selected\""; } ?>>February</option>
+  <option value="3"<?php if(isset($month) && $month == 3) { echo " selected=\"selected\""; } elseif(!isset($month) && date("n") == 3) { echo " selected=\"selected\""; } ?>>March</option>
+  <option value="4"<?php if(isset($month) && $month == 4) { echo " selected=\"selected\""; } elseif(!isset($month) && date("n") == 4) { echo " selected=\"selected\""; } ?>>April</option>
+  <option value="5"<?php if(isset($month) && $month == 5) { echo " selected=\"selected\""; } elseif(!isset($month) && date("n") == 5) { echo " selected=\"selected\""; } ?>>May</option>
+  <option value="6"<?php if(isset($month) && $month == 6) { echo " selected=\"selected\""; } elseif(!isset($month) && date("n") == 6) { echo " selected=\"selected\""; } ?>>June</option>
+  <option value="7"<?php if(isset($month) && $month == 7) { echo " selected=\"selected\""; } elseif(!isset($month) && date("n") == 7) { echo " selected=\"selected\""; } ?>>July</option>
+  <option value="8"<?php if(isset($month) && $month == 8) { echo " selected=\"selected\""; } elseif(!isset($month) && date("n") == 8) { echo " selected=\"selected\""; } ?>>August</option>
+  <option value="9"<?php if(isset($month) && $month == 9) { echo " selected=\"selected\""; } elseif(!isset($month) && date("n") == 9) { echo " selected=\"selected\""; } ?>>September</option>
+  <option value="10"<?php if(isset($month) && $month == 10) { echo " selected=\"selected\""; } elseif(!isset($month) && date("n") == 10) { echo " selected=\"selected\""; } ?>>October</option>
+  <option value="11"<?php if(isset($month) && $month == 11) { echo " selected=\"selected\""; } elseif(!isset($month) && date("n") == 11) { echo " selected=\"selected\""; } ?>>November</option>
+  <option value="12"<?php if(isset($month) && $month == 12) { echo " selected=\"selected\""; } elseif(!isset($month) && date("n") == 12) { echo " selected=\"selected\""; } ?>>December</option>
+  </select><br>
+  Day: <select name="day" required="required">
+  <option value="">-Select-</option>
+  <option value="1"<?php if(isset($day) && $day == 1) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 1) { echo " selected=\"selected\""; } ?>>1</option>
+  <option value="2"<?php if(isset($day) && $day == 2) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 2) { echo " selected=\"selected\""; } ?>>2</option>
+  <option value="3"<?php if(isset($day) && $day == 3) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 3) { echo " selected=\"selected\""; } ?>>3</option>
+  <option value="4"<?php if(isset($day) && $day == 4) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 4) { echo " selected=\"selected\""; } ?>>4</option>
+  <option value="5"<?php if(isset($day) && $day == 5) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 5) { echo " selected=\"selected\""; } ?>>5</option>
+  <option value="6"<?php if(isset($day) && $day == 6) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 6) { echo " selected=\"selected\""; } ?>>6</option>
+  <option value="7"<?php if(isset($day) && $day == 7) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 7) { echo " selected=\"selected\""; } ?>>7</option>
+  <option value="8"<?php if(isset($day) && $day == 8) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 8) { echo " selected=\"selected\""; } ?>>8</option>
+  <option value="9"<?php if(isset($day) && $day == 9) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 9) { echo " selected=\"selected\""; } ?>>9</option>
+  <option value="10"<?php if(isset($day) && $day == 10) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 10) { echo " selected=\"selected\""; } ?>>10</option>
+  <option value="11"<?php if(isset($day) && $day == 11) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 11) { echo " selected=\"selected\""; } ?>>11</option>
+  <option value="12"<?php if(isset($day) && $day == 12) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 12) { echo " selected=\"selected\""; } ?>>12</option>
+  <option value="13"<?php if(isset($day) && $day == 13) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 13) { echo " selected=\"selected\""; } ?>>13</option>
+  <option value="14"<?php if(isset($day) && $day == 14) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 14) { echo " selected=\"selected\""; } ?>>14</option>
+  <option value="15"<?php if(isset($day) && $day == 15) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 15) { echo " selected=\"selected\""; } ?>>15</option>
+  <option value="16"<?php if(isset($day) && $day == 16) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 16) { echo " selected=\"selected\""; } ?>>16</option>
+  <option value="17"<?php if(isset($day) && $day == 17) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 17) { echo " selected=\"selected\""; } ?>>17</option>
+  <option value="18"<?php if(isset($day) && $day == 18) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 18) { echo " selected=\"selected\""; } ?>>18</option>
+  <option value="19"<?php if(isset($day) && $day == 19) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 19) { echo " selected=\"selected\""; } ?>>19</option>
+  <option value="20"<?php if(isset($day) && $day == 20) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 20) { echo " selected=\"selected\""; } ?>>20</option>
+  <option value="21"<?php if(isset($day) && $day == 21) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 21) { echo " selected=\"selected\""; } ?>>21</option>
+  <option value="22"<?php if(isset($day) && $day == 22) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 22) { echo " selected=\"selected\""; } ?>>22</option>
+  <option value="23"<?php if(isset($day) && $day == 23) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 23) { echo " selected=\"selected\""; } ?>>23</option>
+  <option value="24"<?php if(isset($day) && $day == 24) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 24) { echo " selected=\"selected\""; } ?>>24</option>
+  <option value="25"<?php if(isset($day) && $day == 25) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 25) { echo " selected=\"selected\""; } ?>>25</option>
+  <option value="26"<?php if(isset($day) && $day == 26) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 26) { echo " selected=\"selected\""; } ?>>26</option>
+  <option value="27"<?php if(isset($day) && $day == 27) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 27) { echo " selected=\"selected\""; } ?>>27</option>
+  <option value="28"<?php if(isset($day) && $day == 28) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 28) { echo " selected=\"selected\""; } ?>>28</option>
+  <option value="29"<?php if(isset($day) && $day == 29) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 29) { echo " selected=\"selected\""; } ?>>29</option>
+  <option value="30"<?php if(isset($day) && $day == 30) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 30) { echo " selected=\"selected\""; } ?>>30</option>
+  <option value="31"<?php if(isset($day) && $day == 31) { echo " selected=\"selected\""; } elseif(!isset($day) && date("j") == 31) { echo " selected=\"selected\""; } ?>>31</option>
+  </select><br>
+  Year: <input type="text" name="year" value="<?php if(isset($year)) { echo $year; } else { echo date("Y"); } ?>" required="required"><br>
   <input type="submit" value="View events">
   </form>
   <hr>
